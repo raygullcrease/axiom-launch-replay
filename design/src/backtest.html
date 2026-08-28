@@ -1,0 +1,58 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Lemma: backtest</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  .body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 280px; }
+  .left { display: flex; flex-direction: column; min-width: 0; }
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--color-separator); }
+  .stat { padding: 12px 16px; border-right: 1px solid var(--color-separator); display: grid; gap: 4px; }
+  .stat:last-child { border-right: 0; }
+  .stat b { font: 600 20px/1 var(--font-display); letter-spacing: -0.02em; white-space: nowrap; }
+  .plot { position: relative; flex: 1; min-height: 0; margin: 10px 12px 0; }
+  .legend { display: flex; gap: 16px; padding: 10px 16px 12px; font-size: 12px; color: var(--color-text-muted); }
+  .legend i { display: inline-block; width: 18px; height: 0; margin-right: 6px; vertical-align: middle; border-top: 2.4px solid var(--color-proof); }
+  .legend i.g { border-top: 1.6px dashed #8e8e93; }
+  .right { border-left: 1px solid var(--color-separator); display: flex; flex-direction: column; }
+  .sec { padding: 12px 14px; border-bottom: 1px solid var(--color-separator); display: grid; gap: 7px; }
+  .sec h3 { margin: 0; font: 600 13.5px/1.2 var(--font-display); }
+  .rule { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 28px; padding: 0 9px; border-radius: 7px; background: var(--color-fill-quiet); font-size: 12px; }
+  .rule b { font-weight: 600; }
+  .cost { display: flex; justify-content: space-between; font-size: 12px; }
+  .cost span:first-child { color: var(--color-text-muted); }
+  .foot { margin-top: auto; padding: 12px 14px; display: grid; gap: 8px; }
+  .foot .btn { width: 100%; }
+  .foot p { margin: 0; font-size: 11.5px; color: var(--color-text-muted); line-height: 1.4; text-align: center; }
+</style>
+<div class="win">
+  <div id="side" style="display:contents"></div>
+  <main class="main">
+    <div class="bar"><h1>Graduation runner</h1><span class="pill">Oct 1 to Nov 5</span><span class="pill"><b>41,882</b> launches replayed</span><span style="flex:1"></span><span class="btn">Compare</span><span class="btn proof">${''}Run again</span></div>
+    <div class="body">
+      <section class="left"><div class="stats" id="stats"></div><div class="plot" id="plot"></div>
+        <div class="legend"><span><i></i>After every cost</span><span><i class="g"></i>Before costs</span><span style="margin-left:auto">Bought 2,914 of 41,882. Sample data, not advice.</span></div></section>
+      <aside class="right" id="right"></aside>
+    </div>
+  </main>
+</div>
+<script src="kit.js"></script>
+<script src="ui.js"></script>
+<script>
+  const { curve, COSTS } = Kit;
+  const { icon, sidebar, sol, equity } = UI;
+  const $ = (id) => document.getElementById(id);
+  $('side').innerHTML = sidebar('Backtest');
+  document.querySelector('.btn.proof').innerHTML = `${icon('play', 13, 2.2)}Run again`;
+  const total = COSTS.reduce((a, c) => a + c[2], 0);
+  $('stats').innerHTML = [
+    ['After every cost', `<span class="proof">${sol(18.4)}</span>`], ['Before costs', `<span style="color:var(--color-text-muted)">${sol(31.2)}</span>`],
+    ['Costs', `<span class="loss">${sol(-total)}</span>`], ['Win rate', '31%'], ['Worst drawdown', `<span class="loss">${sol(-4.1)}</span>`],
+  ].map(([l, v]) => `<div class="stat"><span class="lbl">${l}</span><b>${v}</b></div>`).join('');
+  requestAnimationFrame(() => { const pl = $('plot'); pl.innerHTML = equity(curve(160, 11), pl.clientWidth, pl.clientHeight).svg; });
+  const rule = (a, b) => `<div class="rule"><span>${a}</span><b>${b}</b></div>`;
+  $('right').innerHTML = `<div class="sec"><h3>Buy 0.5 SOL when</h3>${rule('Dev holds', 'under 5%')}${rule('Top 10 hold', 'under 30%')}${rule('Same-slot bundle', 'none')}${rule('Market cap', '$8K to $60K')}</div>
+    <div class="sec"><h3>Sell</h3>${rule('Take half', 'at +80%')}${rule('Take the rest', 'at +200%')}${rule('Stop loss', 'at &minus;35%')}${rule('Dev sells', 'sell all')}</div>
+    <div class="sec"><h3>Cost model</h3>${COSTS.map(([n, , v]) => `<div class="cost"><span>${n}</span><span class="loss">${sol(-v)}</span></div>`).join('')}</div>
+    <div class="foot"><span class="btn solid">${icon('paper', 14)}Paper trade it live</span><p>Paper trading watches new launches and fills on paper. Nothing to connect.</p></div>`;
+</script>
