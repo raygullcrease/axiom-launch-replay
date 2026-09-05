@@ -1,0 +1,76 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Lemma hero</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  .top { position: absolute; left: 60px; right: 60px; top: 22px; height: 34px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 9px; font: 600 21px/1 var(--font-display); letter-spacing: -0.02em; }
+  .term { position: absolute; left: 60px; right: 60px; top: 66px; height: 356px; display: grid; grid-template-columns: 410px minmax(0, 1fr) 244px; border-radius: 14px; overflow: hidden; background: var(--color-bg-surface); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.13); }
+  .feed { border-right: 1px solid var(--color-separator); display: flex; flex-direction: column; min-height: 0; }
+  .ph { height: 36px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; border-bottom: 1px solid var(--color-separator); }
+  .ph b { font-size: 12.5px; }
+  .rows { position: relative; flex: 1; overflow: hidden; }
+  .rw { position: absolute; left: 0; right: 0; height: 34px; display: grid; grid-template-columns: 22px 72px 30px 56px 44px 46px 1fr; gap: 5px; align-items: center; gap: 6px; padding: 0 10px 0 12px; font-size: 12px; border-bottom: 1px solid var(--color-separator); }
+  .rw b { font-weight: 600; }
+  .hd { position: relative; height: 26px; border-bottom: 1px solid var(--color-separator); background: var(--color-bg-panel); }
+  .hd span { font-size: 11px; font-weight: 600; }
+  .rw span { color: var(--color-text-muted); }
+  .rw .bad { color: var(--color-loss); }
+  .rw.buy { background: rgb(255 159 10 / 0.08); box-shadow: inset 3px 0 0 var(--color-proof); }
+  .bought { font-style: normal; font-size: 10.5px; font-weight: 700; color: var(--color-on-proof); background: var(--color-proof); border-radius: 5px; padding: 2px 5px; justify-self: end; }
+  .chart { position: relative; display: flex; flex-direction: column; }
+  .vals { display: flex; gap: 16px; padding: 14px 16px 0; }
+  .vals div { display: grid; gap: 3px; }
+  .vals b { font: 600 24px/1 var(--font-display); letter-spacing: -0.02em; white-space: nowrap; }
+  .vals .gross b { color: var(--color-text-muted); font-size: 18px; }
+  .plot { flex: 1; position: relative; }
+  .rules { border-left: 1px solid var(--color-separator); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .rules h3 { margin: 0; font: 600 14px/1.2 var(--font-display); display: flex; align-items: center; gap: 7px; }
+  .rule { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .rule .chk { width: 18px; height: 18px; }
+  .note { margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--color-separator); font-size: 11px; color: var(--color-text-muted); line-height: 1.4; }
+  .copy { position: absolute; left: 0; right: 0; bottom: 28px; text-align: center; }
+  .copy h1 { margin: 0; font: 600 50px/1.06 var(--font-display); letter-spacing: -0.03em; }
+  .copy p { margin: 9px 0 0; font-size: 17px; color: var(--color-text-muted); letter-spacing: -0.012em; }
+</style>
+<div class="top"><div class="brand"><span id="logo"></span>Lemma</div><span class="pill">Works alongside Axiom. Sample data, not financial advice.</span></div>
+<div class="term">
+  <div class="feed"><div class="ph"><b>Recorded launches</b><span class="pill">Nov 4, 41,882 tokens</span></div><div class="rw hd"><span></span><span>Token</span><span>Age</span><span>Mkt cap</span><span>Dev</span><span>Top 10</span><span></span></div><div class="rows" id="rows"></div></div>
+  <div class="chart"><div class="vals" id="vals"></div><div class="plot" id="plot"></div></div>
+  <div class="rules" id="rules"></div>
+</div>
+<div class="copy"><h1 id="h"></h1><p id="s"></p></div>
+<script src="kit.js"></script>
+<script src="ui.js"></script>
+<script>
+  const { feed, curve, BRAND } = Kit;
+  const { icon, sol, tok, equity, ease, span } = UI;
+  const $ = (id) => document.getElementById(id);
+  $('logo').innerHTML = Kit.iconSVG({ size: 30, small: true, uid: 'lg' });
+  $('h').textContent = BRAND.headline;
+  $('s').textContent = BRAND.sub;
+  const F = feed(80, 7), C = curve(160, 11), RH = 34;
+  const rule = (txt) => `<div class="rule"><span class="chk ok">${icon('check', 11, 2.6)}</span>${txt}</div>`;
+  $('rules').innerHTML = `<h3>${icon('replay', 15)}Graduation runner</h3><div class="lbl">Buy 0.5 SOL when</div>${rule('Dev holds under 5%')}${rule('Top 10 hold under 30%')}${rule('No same-slot bundle')}
+    <div class="lbl">Sell</div>${rule('Half at +80%')}${rule('The rest at +200%')}${rule('Everything at −35%')}
+    <div class="note">Every fill pays your Axiom fee tier, priority fee, tip and modeled slippage.</div>`;
+  // Launches stream past, the rules pick a few, and the curve shows what is left after costs.
+  window.seek = (t) => {
+    const out = 1 - span(t, 8.4, 8.95);
+    const off = t * RH * 2.4, first = Math.floor(off / RH);
+    let html = '';
+    for (let i = first; i < first + 10; i++) {
+      const r = F[i % F.length], y = i * RH - off;
+      html += `<div class="rw ${r.pass ? 'buy' : ''}" style="top:${y}px">${tok(r, 22)}<b>$${r.t}</b><span>${r.age}s</span><span>$${r.mc.toFixed(1)}K</span><span class="${r.dev >= 5 ? 'bad' : ''}">${r.dev}%</span><span class="${r.top >= 30 ? 'bad' : ''}">${r.top}%</span>${r.pass ? '<i class="bought">Bought</i>' : (r.bundle ? '<span class="bad">Bundle</span>' : '<span></span>')}</div>`;
+    }
+    $('rows').innerHTML = html;
+    const p = Math.max(0.02, span(t, 0.3, 6.4) * out);
+    const pl = $('plot'), E = equity(C, pl.clientWidth, pl.clientHeight, { p });
+    pl.innerHTML = E.svg;
+    const done = ease(span(t, 6.4, 6.9)) * out;
+    $('vals').innerHTML = `<div><span class="lbl">After every cost</span><b class="proof">${sol(E.last[1])}</b></div><div class="gross"><span class="lbl">Before costs</span><b>${sol(E.last[0])}</b></div>
+      <div style="opacity:${done};margin-left:auto;text-align:right"><span class="lbl">Costs took</span><b class="loss" style="font-size:16px">${Math.round((1 - 18.4 / 31.2) * 100)}% of the profit</b></div>`;
+  };
+  seek(0);
+</script>
