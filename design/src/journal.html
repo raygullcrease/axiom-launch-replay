@@ -1,0 +1,51 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Lemma: journal</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  .body { flex: 1; min-height: 0; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .head h2 { margin: 0; font: 600 26px/1.15 var(--font-display); letter-spacing: -0.022em; }
+  .head p { margin: 4px 0 0; color: var(--color-text-muted); font-size: 13px; }
+  .split { display: flex; height: 30px; border-radius: 8px; overflow: hidden; gap: 2px; }
+  .split i { display: grid; place-items: center; font-style: normal; font-size: 11.5px; font-weight: 700; color: #000; }
+  .legend4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .key { display: grid; gap: 3px; font-size: 12px; }
+  .key b { display: flex; align-items: center; gap: 6px; }
+  .key b i { width: 9px; height: 9px; border-radius: 2px; }
+  .key span { color: var(--color-text-muted); font-size: 11.5px; line-height: 1.35; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: right; font-size: 11px; font-weight: 600; color: var(--color-text-muted); padding: 0 8px 6px; border-bottom: 1px solid var(--color-separator); }
+  td { text-align: right; padding: 0 8px; height: 32px; border-bottom: 1px solid var(--color-separator); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  td .t { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  td.m { color: var(--color-text-muted); }
+  .foot { margin-top: auto; display: flex; align-items: center; gap: 8px; }
+  .foot p { margin: 0; flex: 1; font-size: 12px; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px; }
+</style>
+<div class="win">
+  <div id="side" style="display:contents"></div>
+  <main class="main">
+    <div class="bar"><h1>Journal</h1><span class="pill"><span class="addr">${''}</span></span><span class="pill">October</span><span style="flex:1"></span><span class="btn">${''}Previous month</span></div>
+    <div class="body" id="body"></div>
+  </main>
+</div>
+<script src="kit.js"></script>
+<script src="ui.js"></script>
+<script>
+  const { TOKENS, COSTS, addr, short } = Kit;
+  const { icon, sidebar, sol, pnl, tok } = UI;
+  const $ = (id) => document.getElementById(id);
+  $('side').innerHTML = sidebar('Journal');
+  document.querySelector('.bar .addr').textContent = short(addr(77, false));
+  document.querySelector('.bar .btn').textContent = 'September';
+  const total = COSTS.reduce((a, c) => a + c[2], 0);
+  const col = ['#ff9f0a', '#ffb340', '#ffcc80', '#8e8e93'];
+  const rows = [[0, 1.2, 0.5, 0.31, 0.028], [1, -0.5, 0.5, 0.29, 0.031], [3, 2.9, 0.5, 0.36, 0.044], [2, -0.18, 0.5, 0.27, 0.022], [4, 0.66, 0.5, 0.3, 0.035], [5, -0.5, 0.5, 0.28, 0.051]];
+  $('body').innerHTML = `<div class="head"><h2>Trading cost you ${sol(total, { sign: false })} in October.</h2><p>That is 41% of what you made before costs. Read from a public address; nothing to connect.</p></div>
+    <div class="split">${COSTS.map(([n, , v], i) => `<i style="flex:${v};background:${col[i]}">${sol(v, { sign: false })}</i>`).join('')}</div>
+    <div class="legend4">${COSTS.map(([n, d], i) => `<div class="key"><b><i style="background:${col[i]}"></i>${n}</b><span>${d}</span></div>`).join('')}</div>
+    <table><tr><th>Token</th><th>Bought</th><th>Result</th><th>Platform fee</th><th>Priority and tip</th><th>Slippage</th></tr>
+      ${rows.map(([k, r, b, f, s]) => `<tr><td><span class="t">${tok(TOKENS[k], 20)}$${TOKENS[k].t}</span></td><td class="m">${sol(b, { sign: false })}</td><td>${pnl(r)}</td><td class="m">${(f * 0.03).toFixed(4)} SOL</td><td class="m">${(0.003).toFixed(4)} SOL</td><td class="m">${s.toFixed(3)} SOL</td></tr>`).join('')}</table>
+    <div class="foot"><p>${icon('lock', 13)}Your history stays in this folder.</p><span class="btn">${icon('download', 14)}CSV for Koinly</span><span class="btn">${icon('download', 14)}CSV for Awaken</span></div>`;
+</script>
