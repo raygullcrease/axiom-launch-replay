@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Ticker</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  #t { position: absolute; left: 0; top: 0; height: 60px; display: flex; align-items: center; white-space: nowrap; font: 600 25px/1 var(--font-display); letter-spacing: -0.02em; }
+  #t span { display: inline-flex; align-items: center; gap: 22px; padding-right: 22px; }
+</style>
+<div id="t"></div>
+<script src="kit.js"></script>
+<script>
+  const { ticker } = Kit.BRAND;
+  let n = 0;
+  const seq = () => `<span>${ticker.map((w) => `${w}${Kit.mark('m' + n++, 24)}`).join('</span><span>')}</span>`;
+  const el = document.getElementById('t');
+  el.innerHTML = seq() + seq();
+  const DUR = 4;
+  window.seek = (t) => { el.style.transform = `translateX(${-(t / DUR) * (el.scrollWidth / 2)}px)`; };
+  seek(0);
+</script>
