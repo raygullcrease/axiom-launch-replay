@@ -1,0 +1,65 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Lemma: rug check</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  .field { flex: 1; display: flex; align-items: center; gap: 9px; height: 32px; padding: 0 12px; border-radius: 9px; background: var(--color-bg-panel); box-shadow: inset 0 0 0 1px var(--color-separator); }
+  .field .ic { color: var(--color-text-muted); }
+  .body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 300px; }
+  .left { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .tokenrow { display: flex; align-items: center; gap: 12px; }
+  .tokenrow b { display: block; font: 600 20px/1.15 var(--font-display); letter-spacing: -0.018em; }
+  .tokenrow span { color: var(--color-text-muted); font-size: 12px; }
+  .verdict { margin-left: auto; text-align: right; }
+  .verdict b { display: block; font: 600 24px/1.1 var(--font-display); color: var(--color-loss); }
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ck { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; background: var(--color-bg-panel); }
+  .ck b { display: block; font-size: 12.5px; font-weight: 600; }
+  .ck span { display: block; font-size: 11.5px; color: var(--color-text-muted); line-height: 1.35; margin-top: 2px; }
+  .holders { display: grid; gap: 6px; }
+  .hbar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; gap: 1.5px; }
+  .hbar i { display: block; height: 100%; }
+  .hlab { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--color-text-muted); }
+  .right { border-left: 1px solid var(--color-separator); padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--color-bg-panel); }
+  .right h3 { margin: 0; font: 600 13.5px/1.2 var(--font-display); }
+  .slot { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .slot div { height: 30px; white-space: nowrap; border-radius: 8px; background: rgb(255 105 97 / 0.14); display: grid; place-items: center; font-size: 10.5px; color: var(--color-loss); font-family: var(--font-addr); }
+  .dev { display: grid; gap: 4px; }
+  .launch { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: center; font-size: 12px; height: 28px; }
+  .note { font-size: 11.5px; color: var(--color-text-muted); line-height: 1.4; }
+</style>
+<div class="win">
+  <div id="side" style="display:contents"></div>
+  <main class="main">
+    <div class="bar"><div class="field" id="field"></div><span class="btn solid">Check</span></div>
+    <div class="body"><section class="left" id="left"></section><aside class="right" id="right"></aside></div>
+  </main>
+</div>
+<script src="kit.js"></script>
+<script src="ui.js"></script>
+<script>
+  const { TOKENS, addr, short } = Kit;
+  const { icon, sidebar, tok } = UI;
+  const $ = (id) => document.getElementById(id);
+  $('side').innerHTML = sidebar('Rug check');
+  const T = { ...TOKENS[0], ca: addr(4242) };
+  $('field').innerHTML = `${icon('search', 15)}<span class="addr">${T.ca}</span>`;
+  const ok = (a, b) => `<div class="ck"><span class="chk ok">${icon('check', 12, 2.6)}</span><div><b>${a}</b><span>${b}</span></div></div>`;
+  const bad = (a, b) => `<div class="ck"><span class="chk bad">${icon('x', 12, 2.6)}</span><div><b>${a}</b><span>${b}</span></div></div>`;
+  const hold = [['#ff6961', 14], ['#ff6961', 9], ['#ff6961', 7], ['#ff6961', 5], ['#ff8a80', 3], ['#ff8a80', 2], ['#636366', 60]];
+  $('left').innerHTML = `<div class="tokenrow">${tok(T, 46)}<div><b>$${T.t}</b><span>Graduated 9 minutes ago. Pool on PumpSwap.</span></div>
+      <div class="verdict"><b>4 red flags</b><span style="color:var(--color-text-muted);font-size:12px">Lemma would skip this one.</span></div></div>
+    <div class="checks">
+      ${ok('Mint authority off', 'Nobody can print more tokens.')}${ok('Freeze authority off', 'Nobody can lock your tokens.')}
+      ${ok('Canonical pool', 'The real PumpSwap pool, not a look-alike.')}${bad('6 wallets bought in one slot', 'A bundle: they hold 31% between them.')}
+      ${bad('Top 10 hold 40%', 'Above your 30% rule.')}${bad('Dev rugged before', '7 of 9 launches dumped within an hour.')}
+      ${bad('Copied launch', 'Same name and picture as $SNIFF from Oct 30.')}${ok('Socials checked', 'The X account wasn\'t renamed this week.')}
+    </div>
+    <div class="holders"><span class="lbl">Who holds it</span><div class="hbar">${hold.map(([c, w]) => `<i style="background:${c};flex:${w}"></i>`).join('')}</div><div class="hlab"><span>Bundle wallets 31%, then the rest of the top 10</span><span>1,284 holders</span></div></div>`;
+  const devs = [['RIBBIT', 'Dumped in 12 min', 1], ['YAWN', 'Dumped in 40 min', 5], ['WADDLE', 'Still trading', 2], ['CHONK', 'Dumped in 6 min', 3]];
+  $('right').innerHTML = `<h3>The bundle, slot 312,884,019</h3><div class="slot">${[1, 2, 3, 4, 5, 6].map((i) => `<div>${short(addr(900 + i, false))}</div>`).join('')}</div>
+    <div class="note">Six fresh wallets, funded from one address 3 minutes before launch.</div>
+    <h3 style="margin-top:4px">The dev's last launches</h3><div class="dev">${devs.map(([t, s, k]) => `<div class="launch">${tok(TOKENS[k], 20)}<span>$${t}</span><span class="${s.startsWith('Dumped') ? 'loss' : 'gain'}">${s}</span></div>`).join('')}</div>
+    <div class="note" style="margin-top:auto">Checks run on your PC against your own RPC, RugCheck and the chain. Sample data.</div>`;
+</script>
