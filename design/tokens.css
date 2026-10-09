@@ -1,0 +1,53 @@
+/* Design tokens. Primitives name a value, semantics name a job.
+   Components use semantic tokens only. Contrast was measured with a WCAG 2 script. */
+
+:root {
+  /* Neutrals */
+  --gray-0: #000000;
+  --gray-900: #141416;
+  --gray-850: #1c1c1e;
+  --gray-800: #232326;
+  --gray-750: #2c2c2e;
+  --gray-400: #a1a1a6;
+  --gray-50: #f5f5f7;
+
+  /* Amber is proof: the mark, your strategy, and results after every cost. Terminal amber, on purpose. */
+  --amber-400: #ff9f0a;
+  /* Profit and loss. Never used for anything else, and always signed (+ or −). */
+  --green-400: #30d158;
+  --red-300: #ff6961;
+
+  /* Surfaces */
+  --color-bg-page: var(--gray-0);
+  --color-bg-surface: var(--gray-850);
+  --color-bg-panel: var(--gray-900);
+  --color-bg-sidebar: var(--gray-800);
+  --color-bg-raised: var(--gray-750);
+
+  /* Text. primary on surface 15.63:1. muted on surface 6.61:1, on panel 7.15:1 */
+  --color-text-primary: var(--gray-50);
+  --color-text-muted: var(--gray-400);
+
+  /* Lines and fills */
+  --color-separator: rgb(255 255 255 / 0.09);
+  --color-fill-quiet: rgb(255 255 255 / 0.07);
+  --color-fill-selected: rgb(255 255 255 / 0.14);
+
+  /* Roles */
+  --color-proof: var(--amber-400); /* 8.28:1 on surface */
+  --color-on-proof: var(--gray-0);
+  --color-gain: var(--green-400);
+  --color-loss: var(--red-300); /* 6.03:1 on surface */
+  --color-action-solid: var(--gray-50);
+  --color-action-label: var(--gray-0);
+
+  /* Type. SF Pro is not redistributable, so Apple devices get it from the system and everyone else gets Inter.
+     Numbers use tabular figures. Addresses use a monospace face, because one wrong character is a different wallet. */
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, Inter, sans-serif;
+  --font-text: "SF Pro Text", -apple-system, BlinkMacSystemFont, Inter, sans-serif;
+  --font-addr: "SF Mono", "Geist Mono", ui-monospace, monospace;
+
+  --radius-control: 7px;
+  --radius-card: 12px;
+  --radius-window: 14px;
+}
