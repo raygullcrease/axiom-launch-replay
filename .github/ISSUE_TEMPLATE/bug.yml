@@ -1,0 +1,15 @@
+name: Bug report
+description: Something worked wrong
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you saw, what you expected
+    validations:
+      required: true
+  - type: input
+    id: win
+    attributes:
+      label: Windows version
+      placeholder: "Windows 11 23H2"

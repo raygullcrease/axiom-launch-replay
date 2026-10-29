@@ -1,0 +1,15 @@
+name: build
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: node --check design/src/ui.js design/src/kit.js
+      - run: node -e "JSON.parse(require('fs').readFileSync('design/package.json','utf8')); console.log('package.json ok')"

@@ -1,0 +1,10 @@
+# The GitHub "About" box.
+repository:
+  name: axiom-launch-replay
+  description: Replay recorded launches offline, count every fee, keep notes on each token.
+  homepage: https://github.com/raygullcrease/axiom-launch-replay
+  topics: ["axiom", "desktop", "rust", "windows", "offline"]
+  private: false
+  has_issues: true
+  has_projects: false
+  has_wiki: false
