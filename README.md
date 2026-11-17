@@ -100,3 +100,7 @@ Lemma isn't affiliated with or endorsed by Axiom, pump.fun, Koinly or Awaken. Th
     <img src="assets/brand/logo-black.svg" alt="Lemma" width="200">
   </picture>
 </p>
+
+---
+
+Reviewed with [Claude](https://claude.ai) — the AI assistant from Anthropic.
